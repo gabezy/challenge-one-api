@@ -63,4 +63,13 @@ public class TopicController {
         return ResponseEntity.ok(new DetailsTopicDto(topicToUpdate));
     }
 
+
+    @DeleteMapping("/{id}")
+    @Transactional
+    public ResponseEntity<Object> delete (@PathVariable String id) {
+        var topic = topicRepository.getReferenceById(id);
+        topicRepository.delete(topic);
+        return ResponseEntity.noContent().build();
+    }
+
 }
