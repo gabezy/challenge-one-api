@@ -4,6 +4,8 @@ import challenge.one.api.domain.service.TopicService;
 import challenge.one.api.domain.topic.CreateTopicDto;
 import challenge.one.api.domain.topic.DetailsTopicDto;
 import challenge.one.api.domain.repository.TopicRepository;
+import challenge.one.api.domain.topic.Topic;
+import challenge.one.api.domain.topic.UpdateTopicDto;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +50,17 @@ public class TopicController {
     public ResponseEntity<DetailsTopicDto> detail (@PathVariable String id) {
         var topic = topicRepository.getReferenceById(id);
         return ResponseEntity.ok(new DetailsTopicDto(topic));
+    }
+
+    @PutMapping("/{id}")
+    @Transactional
+    public ResponseEntity<DetailsTopicDto> update (@PathVariable String id, @RequestBody UpdateTopicDto data) {
+        if (service.hasTopicWithTheSameTitleAndMessage(data.title(), data.message())) {
+            throw new RuntimeException();
+        }
+        Topic topicToUpdate = topicRepository.getReferenceById(id);
+        topicToUpdate.update(data);
+        return ResponseEntity.ok(new DetailsTopicDto(topicToUpdate));
     }
 
 }

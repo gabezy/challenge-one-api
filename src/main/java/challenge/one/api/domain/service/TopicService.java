@@ -18,11 +18,15 @@ public class TopicService {
     private TopicRepository topicRepository;
 
     public Topic createTopic(CreateTopicDto data) {
-        Topic topic = topicRepository.findTopicByTitleAndMessage(data.title(), data.message());
-        if (topic != null) {
+        if (hasTopicWithTheSameTitleAndMessage(data.title(), data.message())) {
             throw new RuntimeException();
         }
         return new Topic(data);
+    }
+
+    public boolean hasTopicWithTheSameTitleAndMessage(String title, String message) {
+        Topic topic = topicRepository.findTopicByTitleAndMessage(title, message);
+        return topic != null;
     }
 
     public Page<DetailsTopicDto> searchTopicWithParams (Pageable pageable, String course, String yearStr) {
