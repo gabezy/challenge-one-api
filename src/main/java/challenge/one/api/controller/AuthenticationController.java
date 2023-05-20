@@ -2,7 +2,8 @@ package challenge.one.api.controller;
 
 import challenge.one.api.domain.user.CreateUserDto;
 import challenge.one.api.domain.user.User;
-import challenge.one.api.infra.security.TokenService;
+import challenge.one.api.infra.security.DataJwtTokenDto;
+import challenge.one.api.infra.security.TokenJwtService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,13 +22,14 @@ public class AuthenticationController {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private TokenService tokenService;
+    private TokenJwtService tokenJwtService;
 
 
     @PostMapping
     public ResponseEntity login(@RequestBody @Valid CreateUserDto data) {
-        var token = new UsernamePasswordAuthenticationToken(data.username(), data.password());
-        var authentication = authenticationManager.authenticate(token);
-        return ResponseEntity.ok(tokenService.generateToken((User) authentication.getPrincipal()));
+        var authenticationToken = new UsernamePasswordAuthenticationToken(data.username(), data.password());
+        var authentication = authenticationManager.authenticate(authenticationToken);
+        var jwtToken = tokenJwtService.generateToken((User) authentication.getPrincipal());
+        return ResponseEntity.ok(new DataJwtTokenDto(jwtToken));
     }
 }
