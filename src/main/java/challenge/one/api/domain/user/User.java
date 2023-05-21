@@ -37,6 +37,10 @@ public class User implements UserDetails {
         this.password = hashPassword(data.password());
     }
 
+    public void update(UpdateUserDto data) {
+        this.username = data.username();
+    }
+
     private String hashPassword (String password) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         return encoder.encode(password);
